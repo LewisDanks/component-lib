@@ -1,31 +1,49 @@
+using System.Security.Claims;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Papercut.Web.Infrastructure.Auth;
+using Papercut.Web.Application.Auth.Dashboard;
+using Papercut.Web.Application.Auth.Shared;
 using Papercut.Web.Infrastructure.ClientContext;
 
 namespace Papercut.Web.Pages;
 
+[Authorize]
 [ClientContext(typeof(DashboardClientContextBuilder))]
-public class DashboardModel : PageModel
+public class DashboardModel(ISender sender) : PageModel
 {
-    public string DisplayName { get; private set; } = string.Empty;
+    private readonly ISender _sender = sender;
 
-    public IActionResult OnGet()
+    public string DisplayName { get; private set; } = string.Empty;
+    public string PreferredTimeZoneId { get; private set; } = "UTC";
+    public string PreferredCulture { get; private set; } = "en-GB";
+
+    public async Task<IActionResult> OnGetAsync(CancellationToken cancellationToken)
     {
-        if (!DummyUserSession.TryGetDisplayName(Request, out var displayName))
+        var result = await _sender.Send(new GetDashboardQuery(GetCurrentUserId()), cancellationToken);
+        if (!result.IsAuthenticated)
         {
-            var returnUrl = Url.Page("/Dashboard");
-            return RedirectToPage("/Login", new { returnUrl });
+            await _sender.Send(new SignOutCommand(), cancellationToken);
+            return RedirectToPage("/Login", new { returnUrl = Url.Page("/Dashboard") });
         }
 
-        DisplayName = displayName;
+        DisplayName = result.DisplayName;
+        PreferredTimeZoneId = result.PreferredTimeZoneId;
+        PreferredCulture = result.PreferredCulture;
+
         return Page();
     }
 
-    public IActionResult OnGetSignOut()
+    public async Task<IActionResult> OnGetSignOutAsync(CancellationToken cancellationToken)
     {
-        DummyUserSession.SignOut(Response);
+        await _sender.Send(new SignOutCommand(), cancellationToken);
         return RedirectToPage("/Login");
+    }
+
+    private string? GetCurrentUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
 
@@ -45,6 +63,9 @@ public sealed class DashboardState
     public required string DisplayName { get; init; }
     public required string SignOutPath { get; init; }
     public required string SettingsPath { get; init; }
+    public required string PreferredTimeZoneId { get; init; }
+    public required string PreferredCulture { get; init; }
+    public required string ServerUtcIso { get; init; }
 }
 
 public sealed class DashboardClientContextBuilder : IClientContextBuilder
@@ -69,6 +90,9 @@ public sealed class DashboardClientContextBuilder : IClientContextBuilder
                 DisplayName = dashboardPageModel.DisplayName,
                 SignOutPath = signOutPath,
                 SettingsPath = settingsPath,
+                PreferredTimeZoneId = dashboardPageModel.PreferredTimeZoneId,
+                PreferredCulture = dashboardPageModel.PreferredCulture,
+                ServerUtcIso = DateTimeOffset.UtcNow.ToString("O"),
             },
         };
 

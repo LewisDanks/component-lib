@@ -121,3 +121,92 @@ Client → validates + renders
 The JSON ClientContext is the only boundary.
 
 Do not collapse this boundary.
+
+BACKEND CONTRACT (MEDIATOR + EF CORE)
+
+Goal:
+
+Keep PageModels thin and deterministic.
+Route backend use-cases through mediator handlers.
+Use EF Core DbContext directly as the data access layer.
+Do not introduce repository wrappers over EF Core.
+
+Default flow:
+
+Razor Page request
+→ PageModel orchestration only
+→ MediatR command/query
+→ Handler transaction script
+→ AuthDbContext (EF Core)
+→ Typed result mapped back to PageModel response/context.
+
+CQRS + transaction script blend:
+
+Queries:
+Read-only handlers returning typed DTO/result models.
+No side effects.
+
+Commands:
+Write handlers owning validation + mutation + persistence for one use-case.
+One command handler should fully complete one business transaction.
+
+PageModel rule:
+
+Allowed:
+Model binding
+Routing/redirect decisions
+Calling mediator
+Mapping handler result to JSON/ClientContext shapes
+
+Not allowed:
+Direct DbContext queries/mutations
+Multi-step business transactions
+Cross-cutting persistence logic
+
+DATA ACCESS RULES
+
+EF Core is the repository layer.
+Inject `AuthDbContext` directly into handlers.
+Prefer explicit LINQ projections for reads.
+Persist with `SaveChangesAsync`.
+No custom repository interfaces/classes unless explicitly approved as an exception.
+
+AUTH/IDENTITY RULES
+
+Use Identity primitives where required (`SignInManager`, `UserManager`, token providers),
+but keep transaction orchestration inside mediator handlers.
+Do not move auth workflows back into PageModels.
+
+BACKEND DECISION TREE (MANDATORY)
+
+1) Is this page action pure orchestration?
+Yes: keep in PageModel and call mediator.
+No: move logic into a mediator handler.
+
+2) Is the use-case read-only?
+Yes: create a Query (`IRequest<TResponse>`).
+No: create a Command (`IRequest<TResponse>`).
+
+3) Does it touch persistence?
+Yes: inject DbContext in handler and use EF Core directly.
+No: keep as application-level handler logic.
+
+4) Does it need Identity operations (sign-in, token verification, etc.)?
+Yes: inject the needed Identity service(s) into handler.
+No: keep dependencies minimal.
+
+5) Is logic duplicated across handlers?
+Yes: extract a focused application/domain service.
+No: keep logic in the handler (prefer locality first).
+
+6) Does this change alter server→client contract?
+Yes: update C# ClientContext, Zod schema, and page module in lockstep.
+No: keep contract unchanged.
+
+DONE CRITERIA (BACKEND)
+
+PageModels are thin.
+Mediator handlers own business use-cases.
+EF Core direct access in handlers (no repositories).
+Typed results only.
+Existing ClientContext boundary remains intact.

@@ -9,5 +9,8 @@ export const dashboardSchema = z.object({
     displayName: z.string(),
     signOutPath: z.string(),
     settingsPath: z.string(),
+    preferredTimeZoneId: z.string(),
+    preferredCulture: z.string(),
+    serverUtcIso: z.string(),
   }),
 });

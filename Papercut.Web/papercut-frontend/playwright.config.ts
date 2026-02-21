@@ -101,6 +101,6 @@ export default defineConfig({
     command:
       'ASPNETCORE_ENVIRONMENT=Development dotnet run --no-launch-profile --project ../Papercut.Web.csproj --urls http://127.0.0.1:5069',
     url: 'http://127.0.0.1:5069',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 })

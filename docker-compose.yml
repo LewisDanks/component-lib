@@ -1,0 +1,14 @@
+services:
+  papercut:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      AuthSeed__PreferredCulture: en-GB
+    volumes:
+      - papercut-data:/data
+
+volumes:
+  papercut-data:

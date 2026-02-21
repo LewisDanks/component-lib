@@ -8,8 +8,15 @@ export const settingsSchema = z.object({
   state: z.object({
     displayName: z.string(),
     email: z.string(),
-    timezone: z.string(),
-    timezoneOptions: z.array(
+    preferredTimeZoneId: z.string(),
+    timeZoneOptions: z.array(
+      z.object({
+        value: z.string(),
+        label: z.string(),
+      })
+    ),
+    preferredCulture: z.string(),
+    cultureOptions: z.array(
       z.object({
         value: z.string(),
         label: z.string(),
@@ -17,6 +24,13 @@ export const settingsSchema = z.object({
     ),
     marketingEmailsEnabled: z.boolean(),
     twoFactorEnabled: z.boolean(),
+    authenticatorSharedKey: z.string(),
+    authenticatorUri: z.string(),
     dashboardPath: z.string(),
+    savePreferencesPath: z.string(),
+    enableTwoFactorPath: z.string(),
+    disableTwoFactorPath: z.string(),
+    antiForgeryToken: z.string(),
+    antiForgeryHeaderName: z.string(),
   }),
 });

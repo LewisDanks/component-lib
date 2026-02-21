@@ -8,8 +8,11 @@ export const loginSchema = z.object({
     returnUrl: z.string().nullable(),
   }),
   state: z.object({
-    defaultDisplayName: z.string(),
     signInPath: z.string(),
     dashboardPath: z.string(),
+    antiForgeryToken: z.string(),
+    antiForgeryHeaderName: z.string(),
+    demoEmail: z.string(),
+    demoPassword: z.string(),
   }),
 });
