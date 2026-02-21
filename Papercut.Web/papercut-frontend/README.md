@@ -35,6 +35,24 @@ pnpm install
 pnpm dev
 ```
 
+### Run Storybook (UI Contract Discovery)
+
+```sh
+pnpm storybook
+```
+
+### Build Storybook (CI/Validation)
+
+```sh
+pnpm storybook:build
+```
+
+### Smoke-Test Storybook Startup
+
+```sh
+pnpm storybook:smoke
+```
+
 ### Type-Check, Compile and Minify for Production
 
 ```sh

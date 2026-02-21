@@ -16,7 +16,14 @@ export default defineConfigWithVueTs(
     files: ['**/*.{vue,ts,mts,tsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/coverage/**',
+    '**/storybook-static/**',
+    '**/playwright-report/**',
+    '**/test-results/**',
+  ]),
 
   ...pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
@@ -24,6 +31,13 @@ export default defineConfigWithVueTs(
   {
     ...pluginPlaywright.configs['flat/recommended'],
     files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+  },
+
+  {
+    files: ['src/ui/core/*.vue'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
   },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
