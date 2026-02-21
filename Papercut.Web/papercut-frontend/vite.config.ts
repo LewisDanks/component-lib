@@ -10,6 +10,15 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  publicDir: false,
+  build: {
+    manifest: true,
+    outDir: '../wwwroot',
+    emptyOutDir: false,
+    rollupOptions: {
+      input: fileURLToPath(new URL('./src/main.ts', import.meta.url)),
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

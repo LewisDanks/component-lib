@@ -1,4 +1,9 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { bootstrapApplication } from "./app/bootstrap";
 
-createApp(App).mount('#app')
+declare global {
+  interface Window {
+    papercut: { bootstrapApplication: (context: unknown) => void };
+  }
+}
+
+window.papercut = { bootstrapApplication };
