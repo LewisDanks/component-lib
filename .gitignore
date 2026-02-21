@@ -1,0 +1,20 @@
+# .NET build outputs
+**/bin/
+**/obj/
+
+# Node dependencies
+**/node_modules/
+
+# Vite outputs emitted into ASP.NET static root
+Papercut.Web/wwwroot/.vite/
+Papercut.Web/wwwroot/assets/
+Papercut.Web/wwwroot/index.html
+
+# IDE / OS noise
+.DS_Store
+.vs/
+*.suo
+*.user
+*.userosscache
+*.swp
+*.log
