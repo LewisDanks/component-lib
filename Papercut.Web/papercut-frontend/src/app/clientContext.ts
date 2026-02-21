@@ -1,20 +1,16 @@
 import { z } from "zod";
-import { IndexPage } from "../pages/index/page";
+import { dashboardPageName, dashboardSchema } from "../pages/dashboard/schema";
+import { loginPageName, loginSchema } from "../pages/login/schema";
 
-export const pages = [IndexPage] as const;
-
-type PageUnion = typeof pages[number];
+const schemas = [loginSchema, dashboardSchema] as const;
 
 export const PageNameSchema = z.enum(
-  pages.map(p => p.pageName) as [PageUnion["pageName"], ...PageUnion["pageName"][]]
+  [loginPageName, dashboardPageName] as const
 );
 
 export const ClientContextSchema = z.discriminatedUnion(
   "pageName",
-  pages.map(p => p.schema) as [
-    PageUnion["schema"],
-    ...PageUnion["schema"][]
-  ]
+  schemas
 );
 
 export type ClientContext = z.infer<typeof ClientContextSchema>;

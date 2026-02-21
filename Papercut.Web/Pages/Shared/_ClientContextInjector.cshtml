@@ -1,0 +1,45 @@
+@using System.Text.Json
+@using Papercut.Web.Infrastructure.ClientContext
+@inject IClientContextAccessor ClientContextAccessor
+
+@{
+    if (!ClientContextAccessor.TryGet(out IClientContext? ctx) || ctx is null)
+    {
+        return;
+    }
+
+    // Keep serializer options consistent across app
+    string? json = JsonSerializer.Serialize(ctx, ctx.GetType(), options: new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    });
+}
+
+<script id="__PAPERCUT_CLIENT_CONTEXT__" type="application/json">
+@Html.Raw(json)
+</script>
+
+<script>
+(function () {
+  const el = document.getElementById("__PAPERCUT_CLIENT_CONTEXT__");
+  if (!el || !el.textContent) return;
+
+  const ctx = JSON.parse(el.textContent);
+
+  const bootstrap = () => {
+    if (!window.papercut || !window.papercut.bootstrapApplication) {
+      console.error("papercut bootstrap not found on window.");
+      return;
+    }
+
+    window.papercut.bootstrapApplication(ctx);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootstrap, { once: true });
+    return;
+  }
+
+  bootstrap();
+})();
+</script>
