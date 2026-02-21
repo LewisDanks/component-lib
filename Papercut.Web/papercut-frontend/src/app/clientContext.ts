@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { dashboardPageName, dashboardSchema } from "../pages/dashboard/schema";
 import { loginPageName, loginSchema } from "../pages/login/schema";
+import { settingsPageName, settingsSchema } from "../pages/settings/schema";
 
-const schemas = [loginSchema, dashboardSchema] as const;
+const schemas = [loginSchema, dashboardSchema, settingsSchema] as const;
 
 export const PageNameSchema = z.enum(
-  [loginPageName, dashboardPageName] as const
+  [loginPageName, dashboardPageName, settingsPageName] as const
 );
 
 export const ClientContextSchema = z.discriminatedUnion(

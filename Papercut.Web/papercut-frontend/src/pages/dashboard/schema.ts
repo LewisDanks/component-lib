@@ -8,5 +8,6 @@ export const dashboardSchema = z.object({
   state: z.object({
     displayName: z.string(),
     signOutPath: z.string(),
+    settingsPath: z.string(),
   }),
 });
