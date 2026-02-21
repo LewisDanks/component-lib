@@ -44,6 +44,7 @@ public sealed class DashboardState
 {
     public required string DisplayName { get; init; }
     public required string SignOutPath { get; init; }
+    public required string SettingsPath { get; init; }
 }
 
 public sealed class DashboardClientContextBuilder : IClientContextBuilder
@@ -58,6 +59,7 @@ public sealed class DashboardClientContextBuilder : IClientContextBuilder
 
         var signOutPath = dashboardPageModel.Url.Page("/Dashboard", pageHandler: "SignOut")
             ?? "/Dashboard?handler=SignOut";
+        var settingsPath = dashboardPageModel.Url.Page("/Settings") ?? "/Settings";
 
         IClientContext context = new DashboardClientContext
         {
@@ -66,6 +68,7 @@ public sealed class DashboardClientContextBuilder : IClientContextBuilder
             {
                 DisplayName = dashboardPageModel.DisplayName,
                 SignOutPath = signOutPath,
+                SettingsPath = settingsPath,
             },
         };
 

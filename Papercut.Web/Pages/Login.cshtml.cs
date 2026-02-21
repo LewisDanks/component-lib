@@ -21,10 +21,10 @@ public class LoginModel : PageModel
         return Page();
     }
 
-    public IActionResult OnGetSignIn([FromQuery] string? returnUrl = null)
+    public IActionResult OnGetSignIn([FromQuery] string? returnUrl = null, [FromQuery] string? displayName = null)
     {
         var normalizedReturnUrl = NormalizeReturnUrl(returnUrl);
-        DummyUserSession.SignIn(Response, DummyUserSession.DefaultDisplayName);
+        DummyUserSession.SignIn(Response, NormalizeDisplayName(displayName));
 
         if (normalizedReturnUrl is not null)
         {
@@ -37,6 +37,16 @@ public class LoginModel : PageModel
     private string? NormalizeReturnUrl(string? returnUrl)
     {
         return Url.IsLocalUrl(returnUrl) ? returnUrl : null;
+    }
+
+    private static string NormalizeDisplayName(string? displayName)
+    {
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return DummyUserSession.DefaultDisplayName;
+        }
+
+        return displayName.Trim();
     }
 }
 

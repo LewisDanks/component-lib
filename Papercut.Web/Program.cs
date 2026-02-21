@@ -10,6 +10,7 @@ builder.Services.AddViteServices();
 builder.Services.AddClientContext();
 builder.Services.AddScoped<LoginClientContextBuilder>();
 builder.Services.AddScoped<DashboardClientContextBuilder>();
+builder.Services.AddScoped<SettingsClientContextBuilder>();
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.ConfigureFilter(
